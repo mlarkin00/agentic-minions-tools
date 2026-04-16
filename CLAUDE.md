@@ -2,13 +2,9 @@
 
 ## Releasing
 
-After any commit that changes Go source code, `go.mod`, or `gemini-extension.json`:
+Releases are fully automated. Any push to `main` that changes Go source,
+`go.mod`, `gemini-extension.json`, or `GEMINI.md` triggers the GitHub Actions
+release workflow, which auto-increments the patch version, builds cross-platform
+binaries, and creates a GitHub Release.
 
-1. Bump the version in `gemini-extension.json`
-2. Commit the version bump
-3. Tag the commit: `git tag v<version>`
-4. Push the tag: `git push origin v<version>`
-
-The GitHub Actions workflow builds cross-platform binaries and creates a
-GitHub Release automatically. The Gemini CLI extension install pulls from
-the latest release.
+No manual tagging or version bumping is needed.
