@@ -6,7 +6,6 @@ running on GCP.
 
 ## Prerequisites
 
-- **Go 1.25+** installed
 - **gcloud CLI** installed and authenticated
 - Access to the `mslarkin-agents` GCP project (or your own deployment)
 
@@ -17,6 +16,21 @@ gcloud auth application-default login
 ```
 
 ## Install
+
+### Gemini CLI (extension)
+
+```sh
+gemini extensions install https://github.com/mlarkin00/agentic-minions-mcp
+```
+
+Then configure the gateway URL:
+
+```sh
+gemini extensions config agentic-minions "Gateway URL"
+# enter: https://gateway-845186993936.us-central1.run.app
+```
+
+Pre-built binaries are downloaded automatically — no Go required.
 
 ### Claude Code
 
@@ -61,9 +75,10 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`
 }
 ```
 
-### Gemini CLI
+### Gemini CLI (manual MCP)
 
-Add to `~/.gemini/settings.json`:
+If you prefer manual MCP config over the extension, add to
+`~/.gemini/settings.json`:
 
 ```json
 {

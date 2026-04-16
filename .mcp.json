@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "agentic-minions": {
+      "command": "go",
+      "args": ["run", "."],
+      "env": {
+        "GATEWAY_URL": "https://gateway-845186993936.us-central1.run.app"
+      }
+    }
+  }
+}
