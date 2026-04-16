@@ -11,7 +11,9 @@
   "keywords": ["agentic-minions", "agents", "mcp", "coding-design"],
   "userConfig": {
     "gateway_url": {
+      "title": "Gateway URL",
       "description": "Base URL of the agentic-minions gateway service (Cloud Run)",
+      "type": "string",
       "sensitive": false
     }
   },
