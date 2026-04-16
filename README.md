@@ -32,28 +32,25 @@ gemini extensions config agentic-minions "Gateway URL"
 
 Pre-built binaries are downloaded automatically — no Go required.
 
-### Claude Code
+### Claude Code (plugin)
 
-The repo ships a `.mcp.json` that Claude Code picks up automatically when
-you open this project:
-
-```jsonc
-// .mcp.json (already committed)
-{
-  "mcpServers": {
-    "agentic-minions": {
-      "command": "go",
-      "args": ["run", "."],
-      "env": {
-        "GATEWAY_URL": "https://gateway-845186993936.us-central1.run.app",
-      },
-    },
-  },
-}
+```sh
+claude plugin add --from https://github.com/mlarkin00/agentic-minions-mcp
 ```
 
-No manual setup needed — open the project in Claude Code and the
-`agentic-minions` tools appear automatically.
+You'll be prompted for the gateway URL during setup:
+
+```
+Gateway URL: https://gateway-845186993936.us-central1.run.app
+```
+
+The plugin registers the MCP server globally — the `agentic-minions` tools
+are available in every Claude Code session.
+
+#### Local development (auto-detected)
+
+When working inside this repo, Claude Code picks up the committed `.mcp.json`
+automatically — no plugin install needed.
 
 ### Claude Desktop
 

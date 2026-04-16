@@ -1,0 +1,19 @@
+{
+  "name": "agentic-minions",
+  "version": "0.1.0",
+  "description": "Connect to the agentic-minions fleet — Claude-powered agents for system design, code architecture, and implementation review.",
+  "author": {
+    "name": "Matt Larkin",
+    "url": "https://github.com/mlarkin00"
+  },
+  "repository": "https://github.com/mlarkin00/agentic-minions-mcp",
+  "license": "MIT",
+  "keywords": ["agentic-minions", "agents", "mcp", "coding-design"],
+  "userConfig": {
+    "gateway_url": {
+      "description": "Base URL of the agentic-minions gateway service (Cloud Run)",
+      "sensitive": false
+    }
+  },
+  "mcpServers": "./claude-mcp.json"
+}

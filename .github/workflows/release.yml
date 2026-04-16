@@ -11,6 +11,8 @@ on:
       - "internal/**"
       - "gemini-extension.json"
       - "GEMINI.md"
+      - ".claude-plugin/**"
+      - "claude-mcp.json"
 
 permissions:
   contents: write
