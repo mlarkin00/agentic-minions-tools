@@ -34,8 +34,11 @@ Pre-built binaries are downloaded automatically — no Go required.
 
 ### Claude Code (plugin)
 
+Add the marketplace and install the plugin:
+
 ```sh
-claude plugin add --from https://github.com/mlarkin00/agentic-minions-tools
+/plugin marketplace add mlarkin00/agentic-minions-tools
+/plugin install agentic-minions@agentic-minions
 ```
 
 You'll be prompted for the gateway URL during setup:

@@ -1,0 +1,17 @@
+{
+  "name": "agentic-minions",
+  "owner": {
+    "name": "Matt Larkin"
+  },
+  "metadata": {
+    "description": "Claude-powered agents for system design, code architecture, and implementation review"
+  },
+  "plugins": [
+    {
+      "name": "agentic-minions",
+      "source": "./",
+      "description": "Connect to the agentic-minions fleet — Claude-powered agents for system design, code architecture, and implementation review.",
+      "version": "0.1.0"
+    }
+  ]
+}
