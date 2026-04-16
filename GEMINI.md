@@ -28,3 +28,9 @@ design, code architecture, implementation, and code review).
   sessions per user.
 - The backend agents run on GKE and may take ~30s on cold start. If you get a
   502/504, retry after a moment.
+
+## Troubleshooting
+
+### Installation Error: 404/Tag Undefined
+
+If you see an error like `Failed to fetch release data for ... at tag undefined: Request failed with status code 404`, it usually means the extension has not yet had a tagged release published on GitHub. Ensure that the first release has been created by the automated workflow.
