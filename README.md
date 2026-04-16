@@ -1,4 +1,4 @@
-# agentic-minions-mcp
+# agentic-minions-tools
 
 A local MCP (Model Context Protocol) server that connects Claude Code, Claude
 Desktop, Gemini CLI, or any MCP-compatible client to the agentic-minions fleet
@@ -20,7 +20,7 @@ gcloud auth application-default login
 ### Gemini CLI (extension)
 
 ```sh
-gemini extensions install https://github.com/mlarkin00/agentic-minions-mcp
+gemini extensions install https://github.com/mlarkin00/agentic-minions-tools
 ```
 
 Then configure the gateway URL:
@@ -35,7 +35,7 @@ Pre-built binaries are downloaded automatically — no Go required.
 ### Claude Code (plugin)
 
 ```sh
-claude plugin add --from https://github.com/mlarkin00/agentic-minions-mcp
+claude plugin add --from https://github.com/mlarkin00/agentic-minions-tools
 ```
 
 You'll be prompted for the gateway URL during setup:
@@ -63,7 +63,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`
     "agentic-minions": {
       "command": "go",
       "args": ["run", "."],
-      "cwd": "/path/to/agentic-minions-mcp",
+      "cwd": "/path/to/agentic-minions-tools",
       "env": {
         "GATEWAY_URL": "https://gateway-845186993936.us-central1.run.app"
       }
@@ -83,7 +83,7 @@ If you prefer manual MCP config over the extension, add to
     "agentic-minions": {
       "command": "go",
       "args": ["run", "."],
-      "cwd": "/path/to/agentic-minions-mcp",
+      "cwd": "/path/to/agentic-minions-tools",
       "env": {
         "GATEWAY_URL": "https://gateway-845186993936.us-central1.run.app"
       }

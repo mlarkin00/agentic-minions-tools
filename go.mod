@@ -1,4 +1,4 @@
-module github.com/mlarkin00/agentic-minions-mcp
+module github.com/mlarkin00/agentic-minions-tools
 
 go 1.25.0
 

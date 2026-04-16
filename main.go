@@ -9,7 +9,7 @@ import (
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
-	"github.com/mlarkin00/agentic-minions-mcp/internal/mcpclient"
+	"github.com/mlarkin00/agentic-minions-tools/internal/mcpclient"
 )
 
 func main() {
