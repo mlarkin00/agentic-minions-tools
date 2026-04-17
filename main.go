@@ -44,6 +44,9 @@ func main() {
 				mcp.Required(),
 				mcp.Description("User identifier for the session"),
 			),
+			mcp.WithString("agent_name",
+				mcp.Description("Optional: The name of the specific agent (e.g. 'ClaudeAgent')"),
+			),
 		),
 		makeCreateSessionHandler(client),
 	)
@@ -66,6 +69,9 @@ func main() {
 			mcp.WithString("message",
 				mcp.Required(),
 				mcp.Description("The message to send to the agent"),
+			),
+			mcp.WithString("agent_name",
+				mcp.Description("Optional: The name of the specific agent (e.g. 'ClaudeAgent')"),
 			),
 		),
 		makeSendMessageHandler(client),
@@ -121,8 +127,9 @@ func makeCreateSessionHandler(client *mcpclient.Client) server.ToolHandlerFunc {
 		if err != nil {
 			return mcp.NewToolResultError("user_id is required"), nil
 		}
+		agentName := request.GetString("agent_name", "")
 
-		session, err := client.CreateSession(role, userID)
+		session, err := client.CreateSession(role, userID, agentName)
 		if err != nil {
 			return mcp.NewToolResultError(fmt.Sprintf("failed to create session: %v", err)), nil
 		}
@@ -130,6 +137,7 @@ func makeCreateSessionHandler(client *mcpclient.Client) server.ToolHandlerFunc {
 		result, _ := json.Marshal(map[string]string{
 			"session_id": session.ID,
 			"user_id":    session.UserID,
+			"agent_name": session.AppName,
 		})
 		return mcp.NewToolResultText(string(result)), nil
 	}
@@ -153,8 +161,9 @@ func makeSendMessageHandler(client *mcpclient.Client) server.ToolHandlerFunc {
 		if err != nil {
 			return mcp.NewToolResultError("message is required"), nil
 		}
+		agentName := request.GetString("agent_name", "")
 
-		result, err := client.SendMessage(role, userID, sessionID, message)
+		result, err := client.SendMessage(role, userID, sessionID, message, agentName)
 		if err != nil {
 			return mcp.NewToolResultError(fmt.Sprintf("send message failed: %v", err)), nil
 		}

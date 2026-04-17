@@ -54,7 +54,7 @@ func TestIntegration_CreateSession_SendMessage(t *testing.T) {
 	client := NewClient(gw.URL, http.DefaultClient)
 
 	// 1. Create session.
-	sess, err := client.CreateSession("coding-design", "testuser")
+	sess, err := client.CreateSession("coding-design", "testuser", "")
 	if err != nil {
 		t.Fatalf("CreateSession: %v", err)
 	}
@@ -63,7 +63,7 @@ func TestIntegration_CreateSession_SendMessage(t *testing.T) {
 	}
 
 	// 2. Send message (streaming).
-	result, err := client.SendMessage("coding-design", "testuser", sess.ID, "What is 2+2?")
+	result, err := client.SendMessage("coding-design", "testuser", sess.ID, "What is 2+2?", "")
 	if err != nil {
 		t.Fatalf("SendMessage: %v", err)
 	}

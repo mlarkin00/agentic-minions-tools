@@ -26,7 +26,7 @@ func TestClient_CreateSession(t *testing.T) {
 	defer server.Close()
 
 	c := NewClient(server.URL, http.DefaultClient)
-	resp, err := c.CreateSession("coding-design", "testuser")
+	resp, err := c.CreateSession("coding-design", "testuser", "")
 	if err != nil {
 		t.Fatalf("CreateSession failed: %v", err)
 	}
@@ -50,7 +50,7 @@ func TestClient_SendMessage_SSE(t *testing.T) {
 	defer server.Close()
 
 	c := NewClient(server.URL, http.DefaultClient)
-	result, err := c.SendMessage("coding-design", "testuser", "session-123", "hello")
+	result, err := c.SendMessage("coding-design", "testuser", "session-123", "hello", "")
 	if err != nil {
 		t.Fatalf("SendMessage failed: %v", err)
 	}
@@ -85,6 +85,51 @@ func TestClient_ListSessions(t *testing.T) {
 	}
 }
 
+func TestClient_CreateSession_WithAgentName(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var body map[string]string
+		json.NewDecoder(r.Body).Decode(&body)
+		if body["appName"] != "CustomAgent" {
+			t.Errorf("expected CustomAgent, got %s", body["appName"])
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{
+			"id":      "session-123",
+			"appName": "CustomAgent",
+			"userId":  "testuser",
+		})
+	}))
+	defer server.Close()
+
+	c := NewClient(server.URL, http.DefaultClient)
+	resp, err := c.CreateSession("coding-design", "testuser", "CustomAgent")
+	if err != nil {
+		t.Fatalf("CreateSession failed: %v", err)
+	}
+	if resp.AppName != "CustomAgent" {
+		t.Errorf("expected CustomAgent, got %s", resp.AppName)
+	}
+}
+
+func TestClient_SendMessage_WithAgentName(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var body map[string]any
+		json.NewDecoder(r.Body).Decode(&body)
+		if body["appName"] != "CustomAgent" {
+			t.Errorf("expected CustomAgent, got %s", body["appName"])
+		}
+		w.Header().Set("Content-Type", "text/event-stream")
+		fmt.Fprint(w, "data: {\"id\":\"1\",\"author\":\"agent\",\"turnComplete\":true,\"content\":{\"role\":\"model\",\"parts\":[{\"text\":\"done\"}]}}\n\n")
+	}))
+	defer server.Close()
+
+	c := NewClient(server.URL, http.DefaultClient)
+	_, err := c.SendMessage("coding-design", "testuser", "session-123", "hello", "CustomAgent")
+	if err != nil {
+		t.Fatalf("SendMessage failed: %v", err)
+	}
+}
+
 func TestClient_DeleteSession(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "DELETE" {
@@ -100,3 +145,4 @@ func TestClient_DeleteSession(t *testing.T) {
 		t.Fatalf("DeleteSession failed: %v", err)
 	}
 }
+

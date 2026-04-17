@@ -33,9 +33,15 @@ type SendMessageResult struct {
 }
 
 // CreateSession creates a new session for the given role and user.
-func (c *Client) CreateSession(role, userID string) (*SessionResponse, error) {
+func (c *Client) CreateSession(role, userID, agentName string) (*SessionResponse, error) {
 	url := fmt.Sprintf("%s/v1/agents/%s/users/%s/sessions", c.baseURL, role, userID)
-	resp, err := c.httpClient.Post(url, "application/json", nil)
+
+	if agentName == "" {
+		agentName = "ClaudeAgent"
+	}
+	bodyBytes, _ := json.Marshal(map[string]string{"appName": agentName})
+
+	resp, err := c.httpClient.Post(url, "application/json", bytes.NewReader(bodyBytes))
 	if err != nil {
 		return nil, fmt.Errorf("create session request: %w", err)
 	}
@@ -54,11 +60,15 @@ func (c *Client) CreateSession(role, userID string) (*SessionResponse, error) {
 }
 
 // SendMessage sends a message to an agent via SSE and returns the final response.
-func (c *Client) SendMessage(role, userID, sessionID, message string) (*SendMessageResult, error) {
+func (c *Client) SendMessage(role, userID, sessionID, message, agentName string) (*SendMessageResult, error) {
 	url := fmt.Sprintf("%s/v1/agents/%s/run_sse", c.baseURL, role)
 
+	if agentName == "" {
+		agentName = "ClaudeAgent"
+	}
+
 	body := map[string]any{
-		"appName":   "ClaudeAgent",
+		"appName":   agentName,
 		"userId":    userID,
 		"sessionId": sessionID,
 		"newMessage": map[string]any{

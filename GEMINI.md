@@ -7,10 +7,10 @@ design, code architecture, implementation, and code review).
 ## Workflow
 
 1. **Create a session** with `create_session` — specify the agent `role` and
-   a `user_id`. You receive a `session_id`.
+   a `user_id`. You can optionally specify an `agent_name`. You receive a `session_id`.
 2. **Send messages** with `send_message` — pass the `role`, `user_id`,
-   `session_id`, and your `message`. The agent streams its response via SSE
-   and returns the final answer.
+   `session_id`, and your `message`. You can optionally specify an `agent_name`.
+   The agent streams its response via SSE and returns the final answer.
 3. **List sessions** with `list_sessions` to see active conversations.
 4. **Delete sessions** with `delete_session` when done.
 
