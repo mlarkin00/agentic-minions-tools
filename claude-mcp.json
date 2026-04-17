@@ -1,9 +1,8 @@
 {
   "mcpServers": {
     "agentic-minions": {
-      "command": "go",
-      "args": ["run", "."],
-      "cwd": "${CLAUDE_PLUGIN_ROOT}",
+      "command": "sh",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/launch.sh"],
       "env": {
         "GATEWAY_URL": "${user_config.gateway_url}"
       }

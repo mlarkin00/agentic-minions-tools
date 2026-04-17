@@ -8,6 +8,9 @@ running on GCP.
 
 - **gcloud CLI** installed and authenticated
 - Access to the `mslarkin-agents` GCP project (or your own deployment)
+- **Go 1.25+** in `PATH` for the Claude Code plugin and the Claude Desktop /
+  manual-MCP setups — the MCP server binary is built on first launch. Not
+  required for the Gemini CLI extension, which ships prebuilt binaries.
 
 Authenticate so the MCP server can obtain ID tokens for Cloud Run:
 
@@ -49,6 +52,10 @@ Gateway URL: https://gateway-845186993936.us-central1.run.app
 
 The plugin registers the MCP server globally — the `agentic-minions` tools
 are available in every Claude Code session.
+
+On first launch, `scripts/launch.sh` runs `go build` inside the plugin cache to
+produce a local `agentic-minions` binary; later launches reuse it (Go's build
+cache also auto-rebuilds after a `/plugin update`).
 
 #### Local development (auto-detected)
 
@@ -147,6 +154,11 @@ Authentication is automatic via:
 
 **"GATEWAY_URL environment variable is required"**
 The MCP server requires `GATEWAY_URL` in its env block. Check your MCP config.
+
+**"no Go files in ..." / MCP fails to connect on Claude Code**
+The launcher needs `${CLAUDE_PLUGIN_ROOT}` and a Go toolchain on `PATH`. Verify
+with `go version` in the same shell Claude Code runs in; re-enable the plugin
+(`/plugin`) if the cache predates the `scripts/launch.sh` wrapper.
 
 **"gcloud auth print-identity-token failed"**
 Run `gcloud auth application-default login` to refresh credentials.
