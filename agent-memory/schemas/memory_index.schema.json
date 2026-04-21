@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mlarkin00/agent-memory/schemas/memory_index.schema.json",
+  "title": "MEMORY.md pointer",
+  "description": "Structural rules for the Tier-1 index. Applied line-by-line; each non-blank, non-comment line MUST match the pattern.",
+  "type": "object",
+  "required": ["max_entries", "max_bytes", "entry_pattern", "entry_max_chars"],
+  "properties": {
+    "max_entries": { "type": "integer", "const": 100 },
+    "max_bytes": { "type": "integer", "const": 25600 },
+    "entry_max_chars": { "type": "integer", "const": 150 },
+    "entry_pattern": {
+      "type": "string",
+      "const": "^- \\[[^\\]]+\\]\\(topics/[a-z0-9]+(-[a-z0-9]+)*\\.md\\) — .+$",
+      "description": "- [Title](topics/file.md) — one-line hook"
+    }
+  }
+}
