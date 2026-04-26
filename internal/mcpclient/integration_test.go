@@ -54,7 +54,7 @@ func TestIntegration_CreateSession_SendMessage(t *testing.T) {
 	client := NewClient(gw.URL, http.DefaultClient)
 
 	// 1. Create session.
-	sess, err := client.CreateSession("coding-design", "testuser", "")
+	sess, err := client.CreateSession("designing-code", "testuser", "")
 	if err != nil {
 		t.Fatalf("CreateSession: %v", err)
 	}
@@ -63,7 +63,7 @@ func TestIntegration_CreateSession_SendMessage(t *testing.T) {
 	}
 
 	// 2. Send message (streaming).
-	result, err := client.SendMessage("coding-design", "testuser", sess.ID, "What is 2+2?", "")
+	result, err := client.SendMessage("designing-code", "testuser", sess.ID, "What is 2+2?", "")
 	if err != nil {
 		t.Fatalf("SendMessage: %v", err)
 	}
@@ -75,7 +75,7 @@ func TestIntegration_CreateSession_SendMessage(t *testing.T) {
 	}
 
 	// 3. List sessions.
-	sessions, err := client.ListSessions("coding-design", "testuser")
+	sessions, err := client.ListSessions("designing-code", "testuser")
 	if err != nil {
 		t.Fatalf("ListSessions: %v", err)
 	}
@@ -84,7 +84,7 @@ func TestIntegration_CreateSession_SendMessage(t *testing.T) {
 	}
 
 	// 4. Delete session.
-	err = client.DeleteSession("coding-design", "testuser", "sess-abc")
+	err = client.DeleteSession("designing-code", "testuser", "sess-abc")
 	if err != nil {
 		t.Fatalf("DeleteSession: %v", err)
 	}

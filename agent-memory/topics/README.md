@@ -5,15 +5,15 @@ that MUST validate against [`../schemas/topic.schema.json`](../schemas/topic.sch
 
 ## Frontmatter fields
 
-| Field         | Required | Notes                                                         |
-| ------------- | -------- | ------------------------------------------------------------- |
-| `name`        | yes      | Kebab-case, matches filename stem                             |
-| `description` | yes      | One sentence; used for fuzzy match at read time               |
-| `type`        | yes      | `user` · `project` · `feedback` · `reference`                 |
-| `roles`       | yes      | List of roles permitted to read this topic                    |
-| `valid_from`  | yes      | ISO date the fact became true                                 |
-| `valid_until` | no       | ISO date the fact was superseded. `null` or omit = current    |
-| `supersedes`  | no       | Filename of the topic this one replaces                       |
+| Field         | Required | Notes                                                      |
+| ------------- | -------- | ---------------------------------------------------------- |
+| `name`        | yes      | Kebab-case, matches filename stem                          |
+| `description` | yes      | One sentence; used for fuzzy match at read time            |
+| `type`        | yes      | `user` · `project` · `feedback` · `reference`              |
+| `roles`       | yes      | List of roles permitted to read this topic                 |
+| `valid_from`  | yes      | ISO date the fact became true                              |
+| `valid_until` | no       | ISO date the fact was superseded. `null` or omit = current |
+| `supersedes`  | no       | Filename of the topic this one replaces                    |
 
 ## Body rules
 

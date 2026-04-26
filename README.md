@@ -135,7 +135,7 @@ Authentication is automatic via:
 ### Example usage (Claude Code)
 
 ```
-> create a session with the coding-design agent
+> create a session with the designing-code agent
 
 > ask it to design a rate limiter in Go
 
@@ -146,9 +146,17 @@ Authentication is automatic via:
 
 ### Available agent roles
 
-| Role            | Description                                                   | Backend                       |
-| --------------- | ------------------------------------------------------------- | ----------------------------- |
-| `coding-design` | System design, code architecture, implementation, code review | Claude Opus 4.6 via Vertex AI |
+| Role                          | Description                                                    | Backend                       |
+| ----------------------------- | -------------------------------------------------------------- | ----------------------------- |
+| `advising-on-code`            | Lightweight code Q&A, recommendations, explanations            | Claude Opus 4.6 via Vertex AI |
+| `designing-code`              | Architectural blueprints, technical specs, implementation maps | Claude Opus 4.6 via Vertex AI |
+| `generating-code`             | High-fidelity code implementation from designs/requirements    | Claude Opus 4.6 via Vertex AI |
+| `validating-code`             | Test generation and verification                               | Claude Opus 4.6 via Vertex AI |
+| `reviewing-code`              | Critical code review, security audits, architectural checks    | Claude Opus 4.6 via Vertex AI |
+| `maintaining-codebase-health` | Refactors, dependency hygiene, tech-debt remediation           | Claude Opus 4.6 via Vertex AI |
+| `pm-assistant`                | PRDs, user stories, and other PM artifacts                     | Claude Opus 4.6 via Vertex AI |
+| `pm-mentor`                   | Strategic PM guidance and prioritization                       | Claude Opus 4.6 via Vertex AI |
+| `authoring-technical-content` | Technical writing, docs, and content authoring                 | Claude Opus 4.6 via Vertex AI |
 
 ## Troubleshooting
 

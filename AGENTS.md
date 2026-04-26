@@ -1,20 +1,24 @@
 # agentic-minions — Agent Briefing
 
 ## Project Context
+
 A local MCP (Model Context Protocol) server that connects clients to the agentic-minions fleet on GCP. Built with Go and `mcp-go`.
 
 ## Operational Commands
+
 - **Build**: `go build -o mcp-server .`
 - **Run**: `go run .` (Requires `GATEWAY_URL` env var)
 - **Test**: `go test ./...`
 - **Lint**: `go vet ./...`
 
 ## Style & Conventions
+
 - Standard Go conventions (`gofmt`, `go vet`).
 - Use `github.com/mark3labs/mcp-go` for MCP implementation.
 - Error handling: wrap errors with context.
 
 ## Architecture & Constraints
+
 - MCP server proxies to a GCP gateway (Cloud Run).
 - Authentication via Application Default Credentials (ADC) or gcloud.
 - Key components:
@@ -23,12 +27,16 @@ A local MCP (Model Context Protocol) server that connects clients to the agentic
 - **Never** hardcode the `GATEWAY_URL`.
 
 ## Local Minions
+
 This extension provides specialized sub-agents (minions) that proxy requests to the remote agentic-minions fleet.
-- **coding-design**: Elite Senior Software Architect for blueprints and technical specs.
-- **coding-generation**: Senior Software Engineer for high-fidelity code implementation.
-- **coding-review**: Lead Software Architect for high-criticality audits and design reviews.
+
+- **designing-code**: Elite Senior Software Architect for blueprints and technical specs.
+- **generating-code**: Senior Software Engineer for high-fidelity code implementation.
+- **reviewing-code**: Lead Software Architect for high-criticality audits and design reviews.
 - **pm-assistant**: Senior PM for generating and refining artifacts (PRDs, user stories).
 - **pm-mentor**: Senior PM Advisor for strategic guidance and prioritization.
+
+Additional canonical roles available via the gateway (no local proxy file yet): `advising-on-code`, `validating-code`, `maintaining-codebase-health`, `authoring-technical-content`.
 
 ## Memory Discipline (MANDATORY)
 

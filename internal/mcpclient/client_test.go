@@ -10,7 +10,7 @@ import (
 
 func TestClient_CreateSession(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/v1/agents/coding-design/users/testuser/sessions" {
+		if r.URL.Path != "/v1/agents/designing-code/users/testuser/sessions" {
 			t.Errorf("unexpected path: %s", r.URL.Path)
 		}
 		if r.Method != "POST" {
@@ -26,7 +26,7 @@ func TestClient_CreateSession(t *testing.T) {
 	defer server.Close()
 
 	c := NewClient(server.URL, http.DefaultClient)
-	resp, err := c.CreateSession("coding-design", "testuser", "")
+	resp, err := c.CreateSession("designing-code", "testuser", "")
 	if err != nil {
 		t.Fatalf("CreateSession failed: %v", err)
 	}
@@ -37,7 +37,7 @@ func TestClient_CreateSession(t *testing.T) {
 
 func TestClient_SendMessage_SSE(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/v1/agents/coding-design/run_sse" {
+		if r.URL.Path != "/v1/agents/designing-code/run_sse" {
 			t.Errorf("unexpected path: %s", r.URL.Path)
 		}
 		w.Header().Set("Content-Type", "text/event-stream")
@@ -50,7 +50,7 @@ func TestClient_SendMessage_SSE(t *testing.T) {
 	defer server.Close()
 
 	c := NewClient(server.URL, http.DefaultClient)
-	result, err := c.SendMessage("coding-design", "testuser", "session-123", "hello", "")
+	result, err := c.SendMessage("designing-code", "testuser", "session-123", "hello", "")
 	if err != nil {
 		t.Fatalf("SendMessage failed: %v", err)
 	}
@@ -76,7 +76,7 @@ func TestClient_ListSessions(t *testing.T) {
 	defer server.Close()
 
 	c := NewClient(server.URL, http.DefaultClient)
-	sessions, err := c.ListSessions("coding-design", "testuser")
+	sessions, err := c.ListSessions("designing-code", "testuser")
 	if err != nil {
 		t.Fatalf("ListSessions failed: %v", err)
 	}
@@ -102,7 +102,7 @@ func TestClient_CreateSession_WithAgentName(t *testing.T) {
 	defer server.Close()
 
 	c := NewClient(server.URL, http.DefaultClient)
-	resp, err := c.CreateSession("coding-design", "testuser", "CustomAgent")
+	resp, err := c.CreateSession("designing-code", "testuser", "CustomAgent")
 	if err != nil {
 		t.Fatalf("CreateSession failed: %v", err)
 	}
@@ -124,7 +124,7 @@ func TestClient_SendMessage_WithAgentName(t *testing.T) {
 	defer server.Close()
 
 	c := NewClient(server.URL, http.DefaultClient)
-	_, err := c.SendMessage("coding-design", "testuser", "session-123", "hello", "CustomAgent")
+	_, err := c.SendMessage("designing-code", "testuser", "session-123", "hello", "CustomAgent")
 	if err != nil {
 		t.Fatalf("SendMessage failed: %v", err)
 	}
@@ -140,7 +140,7 @@ func TestClient_DeleteSession(t *testing.T) {
 	defer server.Close()
 
 	c := NewClient(server.URL, http.DefaultClient)
-	err := c.DeleteSession("coding-design", "testuser", "session-123")
+	err := c.DeleteSession("designing-code", "testuser", "session-123")
 	if err != nil {
 		t.Fatalf("DeleteSession failed: %v", err)
 	}

@@ -15,13 +15,13 @@ of Node.js.
 Extensions offer several ways to customize Gemini CLI. Use this table to decide
 which features your extension needs.
 
-| Feature                                                        | What it is                                                                                                                | When to use it                                                                                                                                                                                                                                                                                 | Invoked by            |
-| :------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------- |
+| Feature                                                                      | What it is                                                                                                                | When to use it                                                                                                                                                                                                                                                                                 | Invoked by            |
+| :--------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------- |
 | **[MCP server](/docs/extensions/reference#mcp-servers)**                     | A standard way to expose new tools and data sources to the model.                                                         | Use this when you want the model to be able to _do_ new things, like fetching data from an internal API, querying a database, or controlling a local application. We also support MCP resources (which can replace custom commands) and system instructions (which can replace custom context) | Model                 |
-| **[Custom commands](/docs/cli/custom-commands)**               | A shortcut (like `/my-cmd`) that executes a pre-defined prompt or shell command.                                          | Use this for repetitive tasks or to save long, complex prompts that you use frequently. Great for automation.                                                                                                                                                                                  | User                  |
+| **[Custom commands](/docs/cli/custom-commands)**                             | A shortcut (like `/my-cmd`) that executes a pre-defined prompt or shell command.                                          | Use this for repetitive tasks or to save long, complex prompts that you use frequently. Great for automation.                                                                                                                                                                                  | User                  |
 | **[Context file (`GEMINI.md`)](/docs/extensions/reference#contextfilename)** | A markdown file containing instructions that are loaded into the model's context at the start of every session.           | Use this to define the "personality" of your extension, set coding standards, or provide essential knowledge that the model should always have.                                                                                                                                                | CLI provides to model |
-| **[Agent skills](/docs/cli/skills)**                           | A specialized set of instructions and workflows that the model activates only when needed.                                | Use this for complex, occasional tasks (like "create a PR" or "audit security") to avoid cluttering the main context window when the skill isn't being used.                                                                                                                                   | Model                 |
-| **[Hooks](/docs/hooks)**                                 | A way to intercept and customize the CLI's behavior at specific lifecycle events (for example, before/after a tool call). | Use this when you want to automate actions based on what the model is doing, like validating tool arguments, logging activity, or modifying the model's input/output.                                                                                                                          | CLI                   |
+| **[Agent skills](/docs/cli/skills)**                                         | A specialized set of instructions and workflows that the model activates only when needed.                                | Use this for complex, occasional tasks (like "create a PR" or "audit security") to avoid cluttering the main context window when the skill isn't being used.                                                                                                                                   | Model                 |
+| **[Hooks](/docs/hooks)**                                                     | A way to intercept and customize the CLI's behavior at specific lifecycle events (for example, before/after a tool call). | Use this when you want to automate actions based on what the model is doing, like validating tool arguments, logging activity, or modifying the model's input/output.                                                                                                                          | CLI                   |
 | **[Custom themes](/docs/extensions/reference#themes)**                       | A set of color definitions to personalize the CLI UI.                                                                     | Use this to provide a unique visual identity for your extension or to offer specialized high-contrast or thematic color schemes.                                                                                                                                                               | User (via /theme)     |
 
 ## Step 1: Create a new extension
@@ -86,32 +86,32 @@ This file contains the source code for your MCP server. It uses the
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { z } from 'zod';
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { z } from "zod";
 
 const server = new McpServer({
-  name: 'prompt-server',
-  version: '1.0.0',
+  name: "prompt-server",
+  version: "1.0.0",
 });
 
 // Registers a new tool named 'fetch_posts'
 server.registerTool(
-  'fetch_posts',
+  "fetch_posts",
   {
-    description: 'Fetches a list of posts from a public API.',
+    description: "Fetches a list of posts from a public API.",
     inputSchema: z.object({}).shape,
   },
   async () => {
     const apiResponse = await fetch(
-      'https://jsonplaceholder.typicode.com/posts',
+      "https://jsonplaceholder.typicode.com/posts",
     );
     const posts = await apiResponse.json();
     const response = { posts: posts.slice(0, 5) };
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: JSON.stringify(response),
         },
       ],
@@ -398,7 +398,7 @@ prevent arbitrary code execution or unauthorized filesystem access.
 ```typescript
 // Example: Validating paths
 if (!path.resolve(inputPath).startsWith(path.resolve(allowedDir) + path.sep)) {
-  throw new Error('Access denied');
+  throw new Error("Access denied");
 }
 ```
 
@@ -622,7 +622,7 @@ name: Release Extension
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   release:
@@ -633,7 +633,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies
         run: npm ci
@@ -1030,4 +1030,3 @@ Gemini CLI supports variable substitution in `gemini-extension.json` and
 | `${extensionPath}` | The absolute path to the extension's directory. |
 | `${workspacePath}` | The absolute path to the current workspace.     |
 | `${/}`             | The platform-specific path separator.           |
-
