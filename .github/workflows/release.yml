@@ -11,15 +11,17 @@ on:
       - "internal/**"
       - "gemini-extension.json"
       - "GEMINI.md"
-      - ".claude-plugin/**"
+      - ".claude-plugin/*.json"
       - "claude-mcp.json"
       - "scripts/**"
+      - "agents/**"
 
 permissions:
   contents: write
 
 jobs:
   version:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.bump.outputs.tag }}
@@ -42,6 +44,19 @@ jobs:
             NEXT="${MAJOR}.${MINOR}.$((PATCH + 1))"
           fi
           echo "tag=${NEXT}" >> "$GITHUB_OUTPUT"
+
+      - name: Update plugin.json version
+        run: |
+          VERSION="${{ steps.bump.outputs.tag }}"
+          # Strip leading 'v' for the version field
+          VERSION_NUM="${VERSION#v}"
+          jq --arg v "$VERSION_NUM" '.version = $v' .claude-plugin/plugin.json > .claude-plugin/plugin.json.tmp
+          mv .claude-plugin/plugin.json.tmp .claude-plugin/plugin.json
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .claude-plugin/plugin.json
+          git commit -m "chore: bump plugin version to ${VERSION_NUM}"
+          git push origin main
 
       - name: Create tag
         run: |
