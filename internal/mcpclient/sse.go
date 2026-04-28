@@ -36,6 +36,38 @@ func (e SSEEvent) Text() string {
 	return sb.String()
 }
 
+// selectFinalText extracts the agent's final response text from a stream of SSE events.
+//
+// The ADK SSE stream interleaves model output with harness/tool narration. Picking the
+// last event with non-empty text is wrong: a trailing harness status event (e.g. progress
+// narration emitted after the model turn ends) will outrank the actual answer. We instead:
+//  1. Prefer the last event explicitly marked turnComplete (and not a partial chunk).
+//  2. Fall back to concatenating non-partial text events in order, for streams that don't
+//     set turnComplete on a content-bearing event.
+//
+// A stream containing only partial chunks (or only events with empty text) returns "" —
+// the caller is expected to treat that as an incomplete response and retry.
+func selectFinalText(events []SSEEvent) string {
+	for i := len(events) - 1; i >= 0; i-- {
+		e := events[i]
+		if e.TurnComplete && !e.Partial {
+			if t := e.Text(); t != "" {
+				return t
+			}
+		}
+	}
+	var sb strings.Builder
+	for _, e := range events {
+		if e.Partial {
+			continue
+		}
+		if t := e.Text(); t != "" {
+			sb.WriteString(t)
+		}
+	}
+	return sb.String()
+}
+
 // ReadSSEEvents reads all SSE events from a stream until EOF.
 func ReadSSEEvents(r io.Reader) ([]SSEEvent, error) {
 	var events []SSEEvent

@@ -62,6 +62,108 @@ func TestClient_SendMessage_SSE(t *testing.T) {
 	}
 }
 
+// Regression: a trailing harness/status event with non-empty text used to clobber
+// the model's final answer because the bridge picked the last text-bearing event.
+func TestClient_SendMessage_IgnoresTrailingStatusEvent(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		flusher := w.(http.Flusher)
+		fmt.Fprint(w, "data: {\"id\":\"1\",\"author\":\"agent\",\"partial\":true,\"content\":{\"role\":\"model\",\"parts\":[{\"text\":\"thinking...\"}]}}\n\n")
+		flusher.Flush()
+		fmt.Fprint(w, "data: {\"id\":\"2\",\"author\":\"agent\",\"turnComplete\":true,\"content\":{\"role\":\"model\",\"parts\":[{\"text\":\"the actual review feedback\"}]}}\n\n")
+		flusher.Flush()
+		// Harness narration emitted after the turn completed — must not be picked.
+		fmt.Fprint(w, "data: {\"id\":\"3\",\"author\":\"harness\",\"content\":{\"role\":\"model\",\"parts\":[{\"text\":\"LLM call started, iteration 5, 34 events\"}]}}\n\n")
+		flusher.Flush()
+	}))
+	defer server.Close()
+
+	c := NewClient(server.URL, http.DefaultClient)
+	result, err := c.SendMessage("reviewing-code", "testuser", "session-123", "review", "")
+	if err != nil {
+		t.Fatalf("SendMessage failed: %v", err)
+	}
+	if result.Response != "the actual review feedback" {
+		t.Errorf("expected final answer, got %q", result.Response)
+	}
+}
+
+// When no event sets turnComplete, the bridge concatenates non-partial text events
+// in order rather than dropping content.
+func TestClient_SendMessage_NoTurnCompleteConcatenates(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		flusher := w.(http.Flusher)
+		fmt.Fprint(w, "data: {\"id\":\"1\",\"author\":\"agent\",\"content\":{\"role\":\"model\",\"parts\":[{\"text\":\"part one. \"}]}}\n\n")
+		flusher.Flush()
+		fmt.Fprint(w, "data: {\"id\":\"2\",\"author\":\"agent\",\"content\":{\"role\":\"model\",\"parts\":[{\"text\":\"part two.\"}]}}\n\n")
+		flusher.Flush()
+	}))
+	defer server.Close()
+
+	c := NewClient(server.URL, http.DefaultClient)
+	result, err := c.SendMessage("reviewing-code", "testuser", "session-123", "go", "")
+	if err != nil {
+		t.Fatalf("SendMessage failed: %v", err)
+	}
+	if result.Response != "part one. part two." {
+		t.Errorf("expected concatenated text, got %q", result.Response)
+	}
+}
+
+// Empty content on first attempt → retry once → succeed.
+func TestClient_SendMessage_RetriesOnEmptyContent(t *testing.T) {
+	var attempts int
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		attempts++
+		w.Header().Set("Content-Type", "text/event-stream")
+		flusher := w.(http.Flusher)
+		if attempts == 1 {
+			// Stream contains only a process-narration event — no real content.
+			fmt.Fprint(w, "data: {\"id\":\"1\",\"author\":\"agent\",\"partial\":true,\"content\":{\"role\":\"model\",\"parts\":[{\"text\":\"warming up\"}]}}\n\n")
+			flusher.Flush()
+			return
+		}
+		fmt.Fprint(w, "data: {\"id\":\"1\",\"author\":\"agent\",\"turnComplete\":true,\"content\":{\"role\":\"model\",\"parts\":[{\"text\":\"recovered answer\"}]}}\n\n")
+		flusher.Flush()
+	}))
+	defer server.Close()
+
+	c := NewClient(server.URL, http.DefaultClient)
+	result, err := c.SendMessage("reviewing-code", "testuser", "session-123", "go", "")
+	if err != nil {
+		t.Fatalf("SendMessage failed: %v", err)
+	}
+	if attempts != 2 {
+		t.Errorf("expected 2 attempts (1 retry), got %d", attempts)
+	}
+	if result.Response != "recovered answer" {
+		t.Errorf("expected 'recovered answer', got %q", result.Response)
+	}
+}
+
+// Empty content on both attempts → return error (no silent empty success).
+func TestClient_SendMessage_FailsAfterOneRetry(t *testing.T) {
+	var attempts int
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		attempts++
+		w.Header().Set("Content-Type", "text/event-stream")
+		flusher := w.(http.Flusher)
+		fmt.Fprint(w, "data: {\"id\":\"1\",\"author\":\"agent\",\"partial\":true,\"content\":{\"role\":\"model\",\"parts\":[{\"text\":\"still warming up\"}]}}\n\n")
+		flusher.Flush()
+	}))
+	defer server.Close()
+
+	c := NewClient(server.URL, http.DefaultClient)
+	_, err := c.SendMessage("reviewing-code", "testuser", "session-123", "go", "")
+	if err == nil {
+		t.Fatal("expected error after retry exhaustion, got nil")
+	}
+	if attempts != 2 {
+		t.Errorf("expected exactly 2 attempts, got %d", attempts)
+	}
+}
+
 func TestClient_ListSessions(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {

@@ -60,7 +60,27 @@ func (c *Client) CreateSession(role, userID, agentName string) (*SessionResponse
 }
 
 // SendMessage sends a message to an agent via SSE and returns the final response.
+//
+// If the agent returns no content (empty response after stripping process/status events),
+// the request is retried once on the same session. Two total attempts; failure thereafter
+// is surfaced as an error so callers can't accidentally treat an empty response as success.
 func (c *Client) SendMessage(role, userID, sessionID, message, agentName string) (*SendMessageResult, error) {
+	const maxAttempts = 2 // initial attempt + 1 retry
+	var lastResult *SendMessageResult
+	for attempt := 1; attempt <= maxAttempts; attempt++ {
+		result, err := c.sendMessageOnce(role, userID, sessionID, message, agentName)
+		if err != nil {
+			return nil, err
+		}
+		if result.Response != "" {
+			return result, nil
+		}
+		lastResult = result
+	}
+	return nil, fmt.Errorf("agent returned no content after %d attempts (events_count=%d)", maxAttempts, lastResult.EventsCount)
+}
+
+func (c *Client) sendMessageOnce(role, userID, sessionID, message, agentName string) (*SendMessageResult, error) {
 	url := fmt.Sprintf("%s/v1/agents/%s/run_sse", c.baseURL, role)
 
 	if agentName == "" {
@@ -97,16 +117,8 @@ func (c *Client) SendMessage(role, userID, sessionID, message, agentName string)
 		return nil, fmt.Errorf("read SSE events: %w", err)
 	}
 
-	var finalText string
-	for i := len(events) - 1; i >= 0; i-- {
-		if text := events[i].Text(); text != "" {
-			finalText = text
-			break
-		}
-	}
-
 	return &SendMessageResult{
-		Response:    finalText,
+		Response:    selectFinalText(events),
 		EventsCount: len(events),
 	}, nil
 }
