@@ -58,45 +58,45 @@ The installer also builds the Go binary using the plugin name. It places a copy 
 ~/.claude/plugins/cache/<marketplace>/<plugin-binary-name>
 ```
 
-**Critical constraint**: the binary name must NOT equal the plugin name (`agentic-minions`), because the installer needs to create a directory at `cache/agentic-minions/agentic-minions/` — and if a file of that name already exists there, the next install fails with `ENOTDIR`.
+**Critical constraint**: the binary name must NOT equal the plugin name (`agentic-minions`), because the installer needs to create a directory at `cache/agentic-minions-tools/agentic-minions/` — and if a file of that name already exists there, the next install fails with `ENOTDIR`.
 
 This is why `scripts/launch.sh` and the release CI both build to `server` / `server.exe` rather than `agentic-minions`.
 
 ### Known failure mode: ENOTDIR on install
 
-**Symptom**: `/plugin install agentic-minions` fails with:
+**Symptom**: `/plugin install agentic-minions@agentic-minions-tools` fails with:
 
 ```
 Failed to install: ENOTDIR: not a directory, rm
-  '/home/<user>/.claude/plugins/cache/agentic-minions/agentic-minions/<version>'
+  '/home/<user>/.claude/plugins/cache/agentic-minions-tools/agentic-minions/<version>'
 ```
 
-**Cause**: `cache/agentic-minions/agentic-minions` exists as a FILE (old build artifact) instead of a directory, blocking the versioned subdirectory from being created.
+**Cause**: `cache/agentic-minions-tools/agentic-minions` exists as a FILE (old build artifact) instead of a directory, blocking the versioned subdirectory from being created.
 
 **Fix — full clean reinstall**:
 
 ```bash
 # 1. Remove cache
-rm -rf ~/.claude/plugins/cache/agentic-minions/
+rm -rf ~/.claude/plugins/cache/agentic-minions-tools/
 
 # 2. Remove marketplaces copy (stale version source)
-rm -rf ~/.claude/plugins/marketplaces/agentic-minions/
+rm -rf ~/.claude/plugins/marketplaces/agentic-minions-tools/
 
 # 3. Remove installed_plugins.json entry
 python3 -c "
 import json
 path = '/home/\$USER/.claude/plugins/installed_plugins.json'
 d = json.load(open(path))
-d.get('plugins', {}).pop('agentic-minions@agentic-minions', None)
+d.get('plugins', {}).pop('agentic-minions@agentic-minions-tools', None)
 json.dump(d, open(path, 'w'), indent=2)
 "
 
 # 4. Re-clone marketplaces dir (installer requires it to exist)
 git clone --depth 1 https://github.com/mlarkin00/agentic-minions-tools.git \
-  ~/.claude/plugins/marketplaces/agentic-minions/
+  ~/.claude/plugins/marketplaces/agentic-minions-tools/
 
 # 5. Reinstall
-# /plugin install agentic-minions
+# /plugin install agentic-minions@agentic-minions-tools
 ```
 
 ### Version sync requirement

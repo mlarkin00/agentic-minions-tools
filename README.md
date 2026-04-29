@@ -41,7 +41,7 @@ Add the marketplace and install the plugin:
 
 ```sh
 /plugin marketplace add mlarkin00/agentic-minions-tools
-/plugin install agentic-minions@agentic-minions
+/plugin install agentic-minions@agentic-minions-tools
 ```
 
 You'll be prompted for the gateway URL during setup:
