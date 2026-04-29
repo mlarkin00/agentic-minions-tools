@@ -11,7 +11,7 @@
       "name": "agentic-minions",
       "source": "./",
       "description": "Connect to the agentic-minions fleet — Claude-powered agents for system design, code architecture, and implementation review.",
-      "version": "0.1.14"
+      "version": "0.1.15"
     }
   ]
 }
