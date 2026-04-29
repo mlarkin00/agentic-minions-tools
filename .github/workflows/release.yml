@@ -20,7 +20,22 @@ permissions:
   contents: write
 
 jobs:
+  validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Versions in sync
+        run: |
+          P=$(jq -r '.version' .claude-plugin/plugin.json)
+          M=$(jq -r '.plugins[] | select(.name == "agentic-minions") | .version' .claude-plugin/marketplace.json)
+          if [ "$P" != "$M" ]; then
+            echo "ERROR: plugin.json ($P) and marketplace.json ($M) versions differ"
+            exit 1
+          fi
+
   version:
+    needs: validate
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     outputs:
