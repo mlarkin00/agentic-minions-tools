@@ -30,7 +30,7 @@ Add the marketplace and install the plugin:
 You'll be prompted for the gateway URL during setup:
 
 ```
-Gateway URL: https://gateway-845186993936.us-central1.run.app
+Gateway URL: https://gateway.agentic-ops.us
 ```
 
 The plugin registers the MCP server globally — the `agentic-minions` tools
@@ -58,7 +58,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`
       "args": ["run", "."],
       "cwd": "/path/to/agentic-minions-tools",
       "env": {
-        "GATEWAY_URL": "https://gateway-845186993936.us-central1.run.app"
+        "GATEWAY_URL": "https://gateway.agentic-ops.us"
       }
     }
   }
