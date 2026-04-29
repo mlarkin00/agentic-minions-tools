@@ -28,7 +28,7 @@ A local MCP (Model Context Protocol) server that connects clients to the agentic
 
 ## Local Minions
 
-This extension provides specialized sub-agents (minions) that proxy requests to the remote agentic-minions fleet.
+This plugin provides specialized sub-agents (minions) that proxy requests to the remote agentic-minions fleet.
 
 - **designing-code**: Elite Senior Software Architect for blueprints and technical specs.
 - **generating-code**: Senior Software Engineer for high-fidelity code implementation.

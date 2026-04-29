@@ -6,7 +6,7 @@ A local MCP server that acts as a proxy for a fleet of Claude-powered agents run
 
 ## Component Map
 
-[Client (Claude Code/Desktop, Gemini CLI)]
+[Client (Claude Code/Desktop)]
 ↓ (JSON-RPC via stdio)
 [Local MCP Server (Go)]
 ↓ (HTTPS + Auth)

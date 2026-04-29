@@ -1,16 +1,14 @@
 # agentic-minions-tools
 
 A local MCP (Model Context Protocol) server that connects Claude Code, Claude
-Desktop, Gemini CLI, or any MCP-compatible client to the agentic-minions fleet
-running on GCP.
+Desktop, or any MCP-compatible client to the agentic-minions fleet running on
+GCP.
 
 ## Prerequisites
 
 - **gcloud CLI** installed and authenticated
 - Access to the `mslarkin-agents` GCP project (or your own deployment)
-- **Go 1.25+** in `PATH` for the Claude Code plugin and the Claude Desktop /
-  manual-MCP setups — the MCP server binary is built on first launch. Not
-  required for the Gemini CLI extension, which ships prebuilt binaries.
+- **Go 1.25+** in `PATH` — the MCP server binary is built on first launch.
 
 Authenticate so the MCP server can obtain ID tokens for Cloud Run:
 
@@ -19,21 +17,6 @@ gcloud auth application-default login
 ```
 
 ## Install
-
-### Gemini CLI (extension)
-
-```sh
-gemini extensions install https://github.com/mlarkin00/agentic-minions-tools
-```
-
-Then configure the gateway URL:
-
-```sh
-gemini extensions config agentic-minions "Gateway URL"
-# enter: https://gateway-845186993936.us-central1.run.app
-```
-
-Pre-built binaries are downloaded automatically — no Go required.
 
 ### Claude Code (plugin)
 
@@ -54,7 +37,7 @@ The plugin registers the MCP server globally — the `agentic-minions` tools
 are available in every Claude Code session.
 
 On first launch, `scripts/launch.sh` runs `go build` inside the plugin cache to
-produce a local `agentic-minions` binary; later launches reuse it (Go's build
+produce a local `.bin/server` binary; later launches reuse it (Go's build
 cache also auto-rebuilds after a `/plugin update`).
 
 #### Local development (auto-detected)
@@ -66,26 +49,6 @@ automatically — no plugin install needed.
 
 Add to `~/Library/Application Support/Claude/claude_desktop_config.json`
 (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
-
-```json
-{
-  "mcpServers": {
-    "agentic-minions": {
-      "command": "go",
-      "args": ["run", "."],
-      "cwd": "/path/to/agentic-minions-tools",
-      "env": {
-        "GATEWAY_URL": "https://gateway-845186993936.us-central1.run.app"
-      }
-    }
-  }
-}
-```
-
-### Gemini CLI (manual MCP)
-
-If you prefer manual MCP config over the extension, add to
-`~/.gemini/settings.json`:
 
 ```json
 {
@@ -154,14 +117,14 @@ handles the full delegate-and-present loop automatically.
 | ----------------- | -------------------------------------------------------------------------------------------------------- |
 | `designing-code`  | Elite Senior Software Architect — architectural blueprints, technical specs, implementation maps         |
 | `generating-code` | Senior Software Engineer — high-fidelity code implementation from designs and requirements               |
-| `reviewing-code`  | Lead Software Architect — high-criticality code reviews, security audits, architectural integrity checks |
+| `reviewing-code`  | Lead Software Architect — high-criticality code reviews and architectural integrity checks               |
 | `pm-assistant`    | Senior Product Manager — PRDs, user stories, roadmaps, and other PM artifacts                            |
 | `pm-mentor`       | Senior PM Advisor — strategic guidance on product decisions, prioritization trade-offs, roadmap dilemmas |
 
 ### Available gateway roles
 
 All nine gateway roles are accessible directly via the MCP tools (useful for
-clients other than Claude Code, or for roles that don't have a local proxy agent).
+roles that don't have a local proxy agent).
 
 | Role                          | Description                                                    |
 | ----------------------------- | -------------------------------------------------------------- |
@@ -169,7 +132,7 @@ clients other than Claude Code, or for roles that don't have a local proxy agent
 | `designing-code`              | Architectural blueprints, technical specs, implementation maps |
 | `generating-code`             | High-fidelity code implementation from designs/requirements    |
 | `validating-code`             | Test generation and verification                               |
-| `reviewing-code`              | Critical code review, security audits, architectural checks    |
+| `reviewing-code`              | Critical code review and architectural checks                  |
 | `maintaining-codebase-health` | Refactors, dependency hygiene, tech-debt remediation           |
 | `pm-assistant`                | PRDs, user stories, and other PM artifacts                     |
 | `pm-mentor`                   | Strategic PM guidance and prioritization                       |
