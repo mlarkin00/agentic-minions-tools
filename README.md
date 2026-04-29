@@ -105,11 +105,11 @@ If you prefer manual MCP config over the extension, add to
 ### Pre-built binary (optional)
 
 ```sh
-go build -o mcp-server .
+go build -o .bin/agentic-minions .
 ```
 
 Then replace `"command": "go"` and `"args": ["run", "."]` with
-`"command": "/path/to/mcp-server"` and `"args": []`.
+`"command": "/path/to/.bin/agentic-minions"` and `"args": []`.
 
 ## Configuration
 
@@ -144,19 +144,36 @@ Authentication is automatic via:
 > delete the session when done
 ```
 
-### Available agent roles
+### Claude Code agents
 
-| Role                          | Description                                                    | Backend                       |
-| ----------------------------- | -------------------------------------------------------------- | ----------------------------- |
-| `advising-on-code`            | Lightweight code Q&A, recommendations, explanations            | Claude Opus 4.6 via Vertex AI |
-| `designing-code`              | Architectural blueprints, technical specs, implementation maps | Claude Opus 4.6 via Vertex AI |
-| `generating-code`             | High-fidelity code implementation from designs/requirements    | Claude Opus 4.6 via Vertex AI |
-| `validating-code`             | Test generation and verification                               | Claude Opus 4.6 via Vertex AI |
-| `reviewing-code`              | Critical code review, security audits, architectural checks    | Claude Opus 4.6 via Vertex AI |
-| `maintaining-codebase-health` | Refactors, dependency hygiene, tech-debt remediation           | Claude Opus 4.6 via Vertex AI |
-| `pm-assistant`                | PRDs, user stories, and other PM artifacts                     | Claude Opus 4.6 via Vertex AI |
-| `pm-mentor`                   | Strategic PM guidance and prioritization                       | Claude Opus 4.6 via Vertex AI |
-| `authoring-technical-content` | Technical writing, docs, and content authoring                 | Claude Opus 4.6 via Vertex AI |
+When the plugin is installed, five proxy agents are auto-registered as Claude
+Code subagents. Each one opens a session with its matching gateway role and
+handles the full delegate-and-present loop automatically.
+
+| Agent             | Description                                                                                              |
+| ----------------- | -------------------------------------------------------------------------------------------------------- |
+| `designing-code`  | Elite Senior Software Architect — architectural blueprints, technical specs, implementation maps         |
+| `generating-code` | Senior Software Engineer — high-fidelity code implementation from designs and requirements               |
+| `reviewing-code`  | Lead Software Architect — high-criticality code reviews, security audits, architectural integrity checks |
+| `pm-assistant`    | Senior Product Manager — PRDs, user stories, roadmaps, and other PM artifacts                            |
+| `pm-mentor`       | Senior PM Advisor — strategic guidance on product decisions, prioritization trade-offs, roadmap dilemmas |
+
+### Available gateway roles
+
+All nine gateway roles are accessible directly via the MCP tools (useful for
+clients other than Claude Code, or for roles that don't have a local proxy agent).
+
+| Role                          | Description                                                    |
+| ----------------------------- | -------------------------------------------------------------- |
+| `advising-on-code`            | Lightweight code Q&A, recommendations, explanations            |
+| `designing-code`              | Architectural blueprints, technical specs, implementation maps |
+| `generating-code`             | High-fidelity code implementation from designs/requirements    |
+| `validating-code`             | Test generation and verification                               |
+| `reviewing-code`              | Critical code review, security audits, architectural checks    |
+| `maintaining-codebase-health` | Refactors, dependency hygiene, tech-debt remediation           |
+| `pm-assistant`                | PRDs, user stories, and other PM artifacts                     |
+| `pm-mentor`                   | Strategic PM guidance and prioritization                       |
+| `authoring-technical-content` | Technical writing, docs, and content authoring                 |
 
 ## Troubleshooting
 

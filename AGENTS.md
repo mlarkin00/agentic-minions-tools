@@ -6,7 +6,7 @@ A local MCP (Model Context Protocol) server that connects clients to the agentic
 
 ## Operational Commands
 
-- **Build**: `go build -o mcp-server .`
+- **Build**: `go build -o .bin/agentic-minions .`
 - **Run**: `go run .` (Requires `GATEWAY_URL` env var)
 - **Test**: `go test ./...`
 - **Lint**: `go vet ./...`

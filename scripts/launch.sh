@@ -11,6 +11,6 @@ root="${CLAUDE_PLUGIN_ROOT:-$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)}"
 cd "$root"
 
 # Build stdout must not pollute MCP's stdio stream — send build output to stderr.
-go build -o agentic-minions . 1>&2
+go build -o .bin/agentic-minions . 1>&2
 
-exec ./agentic-minions
+exec ./.bin/agentic-minions
