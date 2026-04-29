@@ -8,12 +8,7 @@
   },
   "repository": "https://github.com/mlarkin00/agentic-minions-tools",
   "license": "MIT",
-  "keywords": [
-    "agentic-minions",
-    "agents",
-    "mcp",
-    "coding-design"
-  ],
+  "keywords": ["agentic-minions", "agents", "mcp", "coding-design"],
   "userConfig": {
     "gateway_url": {
       "title": "Gateway URL",

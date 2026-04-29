@@ -1,5 +1,5 @@
 .bin/
-agentic-minions.exe
+server.exe
 staging/
 *.tar.gz
 *.zip
