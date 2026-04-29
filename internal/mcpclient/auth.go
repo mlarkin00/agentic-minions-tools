@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -57,6 +59,26 @@ func (t *gcloudIDTokenTransport) RoundTrip(req *http.Request) (*http.Response, e
 	return http.DefaultTransport.RoundTrip(req2)
 }
 
+// gcloudPath returns the path to the gcloud binary, searching PATH and then
+// known install locations (e.g. ~/google-cloud-sdk/bin) that may not be
+// present when Claude Code spawns plugin processes with a minimal environment.
+func gcloudPath() (string, error) {
+	if p, err := exec.LookPath("gcloud"); err == nil {
+		return p, nil
+	}
+	candidates := []string{
+		filepath.Join(os.Getenv("HOME"), "google-cloud-sdk", "bin", "gcloud"),
+		"/usr/lib/google-cloud-sdk/bin/gcloud",
+		"/snap/bin/gcloud",
+	}
+	for _, p := range candidates {
+		if _, err := os.Stat(p); err == nil {
+			return p, nil
+		}
+	}
+	return "", fmt.Errorf("gcloud not found in PATH or known install locations")
+}
+
 func (t *gcloudIDTokenTransport) getToken() (string, error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
@@ -65,13 +87,18 @@ func (t *gcloudIDTokenTransport) getToken() (string, error) {
 		return t.token, nil
 	}
 
+	gcloud, err := gcloudPath()
+	if err != nil {
+		return "", err
+	}
+
 	// Try with --audiences first (works with service accounts).
 	// Fall back without it (required for authorized_user credentials).
-	cmd := exec.Command("gcloud", "auth", "print-identity-token",
+	cmd := exec.Command(gcloud, "auth", "print-identity-token",
 		"--audiences="+t.audience)
 	out, err := cmd.Output()
 	if err != nil {
-		cmd = exec.Command("gcloud", "auth", "print-identity-token")
+		cmd = exec.Command(gcloud, "auth", "print-identity-token")
 		out, err = cmd.Output()
 		if err != nil {
 			return "", fmt.Errorf("gcloud auth print-identity-token failed: %w", err)

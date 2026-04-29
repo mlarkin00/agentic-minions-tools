@@ -20,7 +20,7 @@ A local MCP (Model Context Protocol) server that connects clients to the agentic
 ## Architecture & Constraints
 
 - MCP server proxies to a GCP gateway (Cloud Run).
-- Authentication via Application Default Credentials (ADC) or gcloud.
+- Authentication via Application Default Credentials (ADC) or gcloud CLI fallback. `gcloudPath()` in `auth.go` probes `exec.LookPath` then known install locations (`~/google-cloud-sdk/bin`, `/usr/lib/google-cloud-sdk/bin`, `/snap/bin`) — required because Claude Code spawns plugin processes with a stripped PATH.
 - Key components:
   - `main.go`: Entry point, tool registration.
   - `internal/mcpclient/`: Core logic for communicating with the gateway.
